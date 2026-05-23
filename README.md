@@ -8,7 +8,31 @@ When a workspace has only one or two windows, the layout usually matters less. W
 
 [Master-stack](https://wiki.hypr.land/Configuring/Layouts/Master-Layout/) keeps one window large and shows the rest in a stack. This is useful for cross-referencing, but the stack becomes cramped when many windows are open.
 
+```text
++----------------------+----------------------+
+|                      |        Stack         |
+|                      |----------------------|
+|                      |        Stack         |
+|        Master        |----------------------|
+|                      |        Stack         |
+|                      |----------------------|
+|                      |        Stack         |
++----------------------+----------------------+
+```
+
 [DWM Deck](https://dwm.suckless.org/patches/deck/) layout solves the size problem by using a monocle layout for the stack area, showing only one secondary window at a time. The selected window is usable, but the others disappear from view.
+
+```text
++----------------------+----------------------+
+|                      |                      |
+|                      |                      |
+|                      |                      |
+|        Master        |       Monocle        |
+|                      |                      |
+|                      |                      |
+|                      |                      |
++----------------------+----------------------+
+```
 
 Hyprdeck keeps the large working areas from deck layouts, while still showing every window.
 
