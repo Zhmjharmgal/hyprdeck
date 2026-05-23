@@ -1,12 +1,29 @@
 # Hyprdeck
 
-Hyprdeck is a custom Hyprland layout for busy workspaces with many windows.
+Hyprdeck is a custom master-based Hyprland layout for busy workspaces with many windows.
 
-When a workspace has only one or two windows, the layout usually matters less. When many windows are open, common layouts start to break down.
+It keeps two windows large enough to use, while keeping the rest visible in a small deck.
 
-## Motivation
+```text
++----------------------+-----------------------------+
+|                      | Intern | Intern | Intern    |
+|                      |-----------------------------|
+|         CEO          |                             |
+|                      |                             |
+|                      |          Manager            |
+|                      |                             |
++----------------------+-----------------------------+
+```
 
-[Master-stack](https://wiki.hypr.land/Configuring/Layouts/Master-Layout/) keeps one window large and shows the rest in a stack. This is useful for cross-referencing, but the stack becomes cramped when many windows are open.
+The **CEO** is the main window. The **manager** is a secondary large window. The **interns** are the other windows, shown as small previews in one row.
+
+## Why
+
+When a workspace only has one or two windows, the layout (tiling algorithm) usually doesn't matter a lot. The problem starts when many windows are open in one workspace.
+
+There are two common layout ideas I love a lot:
+
+- [Master-stack](https://wiki.hypr.land/Configuring/Layouts/Master-Layout/) keeps one window large and shows the rest in a stack. This gives a useful overview, but the stack becomes cramped when many windows are stacked, and every single window becomes useless. You have to constantly swap a slave window with the master window to reference its content.
 
 ```text
 +----------------------+----------------------+
@@ -20,7 +37,9 @@ When a workspace has only one or two windows, the layout usually matters less. W
 +----------------------+----------------------+
 ```
 
-[DWM Deck](https://dwm.suckless.org/patches/deck/) layout solves the size problem by using a monocle layout for the stack area, showing only one secondary window at a time. The selected window is usable, but the others disappear from view.
+---
+
+-  [DWM Deck](https://dwm.suckless.org/patches/deck/) fixes the cramped stack by showing only one secondary window at a time, leaving others invisible. That window can be used for cross-referencing, but the users loses the overview to the opened windows.
 
 ```text
 +----------------------+----------------------+
@@ -34,46 +53,14 @@ When a workspace has only one or two windows, the layout usually matters less. W
 +----------------------+----------------------+
 ```
 
-Hyprdeck keeps the large working areas from deck layouts, while still showing every window.
+---
 
-## Naming
-
-Hyprdeck avoids the traditional master/slave wording. It uses a small office metaphor instead:
-
-- The **CEO** is the main window.
-- The **manager** is the large secondary window.
-- The **interns** are the remaining windows in the deck.
-
-In older layout terms, the CEO maps to the master window. The manager and interns map to slave windows.
-
-## Layout
-
-Hyprdeck has three areas:
-
-- A CEO area for the main window.
-- A manager area for the selected secondary window.
-- A deck area for the interns.
-
-```text
-+----------------------+-----------------------------+
-|                      | Intern | Intern | Intern    |
-|                      |-----------------------------|
-|         CEO          |                             |
-|                      |                             |
-|                      |          Manager            |
-|                      |                             |
-+----------------------+-----------------------------+
-```
-
-The CEO and manager stay large enough to use. The interns stay small, but visible, so the workspace still has an overview.
-
-Hyprdeck is meant for people who want focus without losing track of the rest of the windows.
+Hyprdeck sits between these two ideas: the CEO and manager stay readable for cross-referencing, and the interns stay visible to provide a compact overview.
 
 ## Usage
 
-- Require `hyprdeck.lua` in your `hyprland.lua` and set the layout to be `lua:hyprdeck`.
-- Go to `hyprdeck.lua` and edit `hyprdeck_config` to change the CEO width ratio or deck height ratio.
-- Layout message: use `promote` to perform dynamic window swap:
-    - When the current focus is the CEO window: swap it with the manager.
-    - When the current focus is the manager window: swap it with the CEO. 
-    - When the current focus is an intern, swap it with the manager.
+- Require `hyprdeck.lua` in your `hyprland.lua` and set the layout to `lua:hyprdeck`.
+- Edit `hyprdeck_config` to change the CEO width ratio or deck height ratio.
+- Send the `promote` layout message to rotate roles:
+  - When the CEO or the manager window is focused, swap them.
+  - When an intern window is focused, swap that intern with the manager.
