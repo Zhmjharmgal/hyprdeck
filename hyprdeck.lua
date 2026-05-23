@@ -2,7 +2,7 @@ local hyprdeck_config = {
 	ceo_ratio = 0.60,
 	ceo_direction = "left",
 	opposite_direction = "right",
-	deck_height = 200,
+	deck_ratio = 0.10,
 }
 
 local states_by_workspace = {}
@@ -174,8 +174,8 @@ hl.layout.register("hyprdeck", {
 			ctx.targets[find_by_id(ctx, deck_state.ceo_id)]:place(ceo_area)
 			ctx.targets[find_by_id(ctx, deck_state.manager_id)]:place(staff_area)
 		else
-			local deck_area = ctx:split(staff_area, "top", hyprdeck_config.deck_height / staff_area.h)
-			local manager_area = ctx:split(staff_area, "bottom", 1 - hyprdeck_config.deck_height / staff_area.h)
+			local deck_area = ctx:split(staff_area, "top", hyprdeck_config.deck_ratio)
+			local manager_area = ctx:split(staff_area, "bottom", 1 - hyprdeck_config.deck_ratio)
 
 			local intern_count = n - 2
 			local intern_width = deck_area.w / intern_count

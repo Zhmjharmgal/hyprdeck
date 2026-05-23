@@ -72,8 +72,8 @@ Hyprdeck is meant for people who want focus without losing track of the rest of 
 ## Usage
 
 - Require `hyprdeck.lua` in your `hyprland.lua` and set the layout to be `lua:hyprdeck`.
-- Go to `hyprdeck.lua` and edit `hyprdeck_config` to change some of the variable settings.
-- Layout message: use `swapwithmaster master` to perform dynamic window swap:
+- Go to `hyprdeck.lua` and edit `hyprdeck_config` to change the CEO width ratio or deck height ratio.
+- Layout message: use `promote` to perform dynamic window swap:
     - When the current focus is the CEO window: swap it with the manager.
     - When the current focus is the manager window: swap it with the CEO. 
     - When the current focus is an intern, swap it with the manager.
