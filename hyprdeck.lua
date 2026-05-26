@@ -2,6 +2,8 @@ local hyprdeck_config = {
 	ceo_ratio = 0.60,
 	ceo_direction = "left",
 	opposite_direction = "right",
+	deck_direction = "top",
+	manager_direction = "bottom",
 	deck_ratio = 0.10,
 }
 
@@ -81,9 +83,9 @@ local function sync_added_targets(ctx, deck_state)
 
 	deck_state.known_ids = present
 
-	if added_id and #ctx.targets > 1 and added_id ~= deck_state.ceo_id then
-		update_role_id(deck_state, false, added_id)
-	end
+	-- if added_id and #ctx.targets > 1 and added_id ~= deck_state.ceo_id then
+	-- 	update_role_id(deck_state, false, added_id)
+	-- end
 end
 
 local function id_exist(ctx, id)
@@ -118,6 +120,10 @@ local function pre_check(ctx, deck_state)
 	end
 
 	local manager_exists = id_exist(ctx, deck_state.manager_id)
+	if deck_state.manager_id == deck_state.ceo_id then
+		manager_exists = false
+	end
+
 	if not manager_exists then
 		if id_exist(ctx, deck_state.prev_manager_id) and deck_state.prev_manager_id ~= deck_state.ceo_id then
 			update_role_id(deck_state, false, deck_state.prev_manager_id)
@@ -151,6 +157,7 @@ hl.layout.register("hyprdeck", {
 			return
 		elseif n == 1 then
 			update_role_id(deck_state, true, ctx.targets[1].window.stable_id)
+			update_role_id(deck_state, false, nil)
 			remember_targets(ctx, deck_state)
 			ctx.targets[1]:place(ctx.area)
 			return
@@ -174,8 +181,9 @@ hl.layout.register("hyprdeck", {
 			ctx.targets[find_by_id(ctx, deck_state.ceo_id)]:place(ceo_area)
 			ctx.targets[find_by_id(ctx, deck_state.manager_id)]:place(staff_area)
 		else
-			local deck_area = ctx:split(staff_area, "top", hyprdeck_config.deck_ratio)
-			local manager_area = ctx:split(staff_area, "bottom", 1 - hyprdeck_config.deck_ratio)
+			local deck_area = ctx:split(staff_area, hyprdeck_config.deck_direction, hyprdeck_config.deck_ratio)
+			local manager_area =
+				ctx:split(staff_area, hyprdeck_config.manager_direction, 1 - hyprdeck_config.deck_ratio)
 
 			local intern_count = n - 2
 			local intern_width = deck_area.w / intern_count
@@ -188,9 +196,9 @@ hl.layout.register("hyprdeck", {
 						target:place(manager_area)
 					else
 						local ratio = intern_width / deck_area.w
-						local gap = ctx:split(deck_area, "left", ratio)
+						local gap = ctx:split(deck_area, hyprdeck_config.ceo_direction, ratio)
 						target:place(gap)
-						deck_area = ctx:split(deck_area, "right", 1 - ratio)
+						deck_area = ctx:split(deck_area, hyprdeck_config.opposite_direction, 1 - ratio)
 					end
 				end
 			end
@@ -200,7 +208,23 @@ hl.layout.register("hyprdeck", {
 	layout_msg = function(ctx, msg)
 		local command = msg:match("^%s*(.-)%s*$")
 		local deck_state = deck_state_for(ctx)
-		if command == "swapwithmaster master" or command == "promote" then
+		if command == "promote ceo" then
+			for _, target in ipairs(ctx.targets) do
+				if target.window.active then
+					if
+						target.window.stable_id ~= deck_state.ceo_id
+						and target.window.stable_id ~= deck_state.manager_id
+					then
+						update_role_id(deck_state, true, target.window.stable_id)
+					else
+						local old_ceo_id = deck_state.ceo_id
+						update_role_id(deck_state, true, deck_state.manager_id)
+						update_role_id(deck_state, false, old_ceo_id)
+					end
+				end
+			end
+			return true
+		elseif command == "promote manager" then
 			for _, target in ipairs(ctx.targets) do
 				if target.window.active then
 					if
@@ -215,14 +239,6 @@ hl.layout.register("hyprdeck", {
 					end
 				end
 			end
-			return true
 		end
 	end,
 })
-
--- hl.on("window.open", function(w)
--- 	local ws = hl.get_active_workspace()
--- 	if ws and ws.tiled_layout == "lua:hyprdeck" and not w.floating then
--- 		hl.dispatch(hl.dsp.layout("promote"))
--- 	end
--- end)

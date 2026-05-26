@@ -60,7 +60,12 @@ Hyprdeck sits between these two ideas: the CEO and manager stay readable for cro
 ## Usage
 
 - Require `hyprdeck.lua` in your `hyprland.lua` and set the layout to `lua:hyprdeck`.
-- Edit `hyprdeck_config` to change the CEO width ratio or deck height ratio.
-- Send the `promote` layout message to rotate roles:
-  - When the CEO or the manager window is focused, swap them.
-  - When an intern window is focused, swap that intern with the manager.
+- Edit `hyprdeck_config` to tune the split:
+  - `ceo_ratio` controls how much space the CEO gets.
+  - `ceo_direction` and `opposite_direction` control which side the CEO and staff areas use.
+  - `deck_ratio` controls how much of the staff area is reserved for interns.
+  - `deck_direction` and `manager_direction` control where the intern deck and manager area sit inside the staff area.
+- Send layout messages to rotate roles:
+  - `promote ceo` makes the focused intern the CEO. When the CEO or manager is focused, it swaps the CEO and manager.
+  - `promote manager` makes the focused intern the manager. When the CEO or manager is focused, it swaps the CEO and manager.
+- New windows join the intern deck by default. They do not replace the CEO or the manager until promoted.
